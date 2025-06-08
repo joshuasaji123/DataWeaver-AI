@@ -125,6 +125,56 @@ Please provide specific statistical measures and test results with their interpr
                 "Recommend methodology improvements"
             ]
         },
+        "Personal Accountant": {
+            "prompt": """As a Personal Accountant, analyze the provided financial data with a focus on personal finance management, budgeting, and financial health assessment.
+
+Data Summary:
+{data_summary}
+
+Context:
+{context}
+
+Please provide a comprehensive financial analysis that includes:
+
+1. Financial Health Assessment:
+   - Evaluate overall financial position and cash flow patterns
+   - Identify income sources and expense categories
+   - Calculate key financial ratios and metrics
+   - Assess spending patterns and financial habits
+
+2. Budget Analysis & Recommendations:
+   - Analyze budget adherence and variance patterns
+   - Identify areas of overspending or cost savings opportunities
+   - Recommend budget optimization strategies
+   - Suggest expense category limits and targets
+
+3. Cash Flow Management:
+   - Analyze cash inflows and outflows patterns
+   - Identify seasonal or cyclical spending trends
+   - Recommend cash flow improvement strategies
+   - Highlight potential liquidity concerns
+
+4. Financial Planning & Goal Setting:
+   - Identify saving opportunities and investment potential
+   - Recommend emergency fund targets based on expenses
+   - Suggest financial goals and milestone planning
+   - Provide actionable advice for financial improvement
+
+5. Market Context & External Research:
+   - Research current market conditions affecting personal finances
+   - Compare spending patterns with national/regional averages
+   - Identify economic trends that may impact future financial planning
+   - Provide context on inflation, interest rates, and market conditions
+
+Please provide specific financial insights with concrete numbers and actionable recommendations. Include relevant market research and external context to support your analysis.""",
+            "sub_goals": [
+                "Assess financial health and cash flow",
+                "Analyze budget and spending patterns",
+                "Provide savings and investment recommendations",
+                "Research market conditions and trends",
+                "Create actionable financial improvement plan"
+            ]
+        },
         "Custom": {
             "prompt": """As a {role}, analyze the provided data and provide insights based on your expertise.
 

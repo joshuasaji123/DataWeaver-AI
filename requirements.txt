@@ -1,15 +1,23 @@
+# Core Python packages
 setuptools>=68.0.0
 wheel>=0.40.0
+
+# Essential data science packages
 pandas>=1.5.0
 streamlit>=1.28.0
 ollama>=0.1.0
 python-dotenv>=1.0.0
 numpy>=1.24.0
 psutil>=5.9.0
+
+# AI/ML models and APIs
 openai>=1.0.0
+
+# Basic visualization
 matplotlib>=3.6.0
 seaborn>=0.12.0
 plotly>=5.15.0
+kaleido>=0.2.1
 
 # File system monitoring
 watchdog>=3.0.0
@@ -38,6 +46,8 @@ pdfplumber>=0.10.0
 statsmodels>=0.14.0
 factor-analyzer>=0.4.0
 pingouin>=0.5.0
+scikit-learn>=1.3.0
+scipy>=1.10.0
 
 # Database connectivity
 sqlalchemy>=2.0.0
@@ -47,19 +57,38 @@ pymongo>=4.5.0
 yfinance>=0.2.0
 alpha-vantage>=2.3.0
 
-# LangChain hybrid integration dependencies (optional)
-langchain>=0.1.0
-langchain-community>=0.0.10
-langchain-openai>=0.0.5
-langchain-experimental>=0.0.5
-langgraph>=0.0.40
-langsmith>=0.0.60
-langchain-ollama>=0.0.1
+# LangChain - Updated to compatible versions
+langchain>=0.3.0
+langchain-community>=0.3.0
+langchain-openai>=0.2.0
+langchain-experimental>=0.3.0
+langgraph>=0.2.0
+langsmith>=0.1.0
+langchain-ollama>=0.2.0
 
-# Additional visualization dependencies
-kaleido>=0.2.1
+# Additional dependencies for enhanced features
 nbformat>=5.7.0
 
-# Data processing enhancements
-scikit-learn>=1.3.0
-scipy>=1.10.0 
+# System dependencies for enhanced features
+colorama>=0.4.4
+tqdm>=4.65.0
+rich>=13.0.0
+
+# Web search capabilities  
+duckduckgo-search>=3.9.0
+googlesearch-python>=1.2.0
+
+# Additional visualization and UI enhancements
+streamlit-option-menu>=0.3.6
+streamlit-ace>=0.1.1
+streamlit-aggrid>=0.3.4
+
+# Memory optimization
+memory-profiler>=0.61.0
+
+# Enhanced error handling and logging
+loguru>=0.7.0
+
+# Additional utilities
+python-dateutil>=2.8.0
+pytz>=2023.3 

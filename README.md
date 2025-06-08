@@ -77,7 +77,7 @@ Each agent follows an intelligent workflow:
 ## 🛠️ Installation
 
 ### Prerequisites
-- Python 3.8+ (recommended: 3.9-3.11)
+- **Python 3.9+** (required for LangChain compatibility)
 - 8GB+ RAM (varies by model selection)
 - 2GB+ free storage
 
@@ -94,8 +94,55 @@ chmod +x setup.sh
 python test_enhanced_features.py
 ```
 
-### OCR System Dependencies (Optional)
-For PDF processing capabilities:
+### Quick Dependency Installation
+For a streamlined dependency installation with validation:
+```bash
+# After creating virtual environment
+python install_dependencies.py
+```
+
+### Manual Installation
+```bash
+# Clone the repository
+git clone https://github.com/your-username/DataWeaver-AI.git
+cd DataWeaver-AI
+
+# Create virtual environment (Python 3.9+ required)
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# Upgrade pip to latest version
+pip install --upgrade pip
+
+# Install dependencies
+pip install -r requirements.txt
+```
+
+### ⚠️ Important Installation Notes
+
+**Python Version Requirement:** This project requires **Python 3.9 or higher** due to updated LangChain dependencies (v0.3+). 
+
+**Enhanced Dependencies:** The updated requirements.txt includes:
+- **Updated LangChain** (v0.3+) - resolves deprecation warnings
+- **WordCloud** and visualization enhancements  
+- **Web search capabilities** (duckduckgo-search, googlesearch-python)
+- **Enhanced UI components** (streamlit extensions)
+- **Better error handling** (loguru, rich, colorama)
+
+**Dependency Conflicts:** If you encounter version conflicts:
+```bash
+# Clear pip cache and reinstall
+pip cache purge
+pip install --no-cache-dir -r requirements.txt
+
+# Force reinstall if needed
+pip install -r requirements.txt --force-reinstall
+```
+
+### System Dependencies
+
+**OCR and PDF Processing (Recommended):**
+For advanced document processing capabilities:
 
 **macOS:**
 ```bash
@@ -105,6 +152,17 @@ brew install tesseract poppler
 **Ubuntu/Debian:**
 ```bash
 sudo apt-get install tesseract-ocr poppler-utils
+```
+
+**Windows:**
+- Download Tesseract from: https://github.com/tesseract-ocr/tesseract
+- Download Poppler from: https://poppler.freedesktop.org/
+
+**Web Browser Dependencies (Optional):**
+For enhanced web scraping capabilities:
+```bash
+# Selenium WebDriver (automatically managed by webdriver-manager)
+# No manual installation required - drivers auto-download on first use
 ```
 
 ## 🔧 Configuration
@@ -208,6 +266,20 @@ pip install -r requirements.txt --force-reinstall
 
 # Test specific features
 python test_enhanced_features.py
+```
+
+**LangChain Deprecation Warnings:**
+The updated requirements.txt uses LangChain v0.3+ which resolves deprecation warnings. If you still see warnings:
+```bash
+# Update to latest compatible versions
+pip install --upgrade langchain langchain-community langchain-openai
+```
+
+**WordCloud Not Found:**
+```bash
+# Install missing visualization packages
+pip install wordcloud>=1.9.0
+pip install matplotlib seaborn plotly
 ```
 
 ## 📊 Performance

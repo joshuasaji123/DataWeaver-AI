@@ -139,9 +139,105 @@ class Agent:
         self.web_search_results = []
         self.role_config = None
         
+        # Initialize web search tool for all agents
+        self._initialize_web_search_tool()
+        
         # Initialize enhanced features if available
         if ENHANCED_FEATURES_AVAILABLE:
             self._initialize_enhanced_features()
+
+    def _initialize_web_search_tool(self):
+        """
+        Initialize web search tool for the agent.
+        """
+        try:
+            from src.utils.web_tools import WebSearchTool
+            self.web_search_tool = WebSearchTool()
+            self.thoughts.append("🌐 Web search capabilities enabled")
+        except ImportError:
+            self.thoughts.append("⚠️ Web search not available - install required dependencies")
+        except Exception as e:
+            self.thoughts.append(f"⚠️ Web search initialization failed: {str(e)}")
+
+    def _generate_data_specific_search_queries(self) -> List[str]:
+        """
+        Generate search queries based on the actual data content and analysis results.
+        
+        Returns:
+            List of relevant search queries based on data content
+        """
+        if self.data_copy is None or self.data_copy.empty:
+            return []
+        
+        search_queries = []
+        
+        try:
+            # Analyze column names to understand data type
+            columns = [col.lower() for col in self.data_copy.columns]
+            
+            # Financial data indicators
+            financial_keywords = ['amount', 'balance', 'income', 'expense', 'cost', 'price', 'revenue', 'profit', 'transaction', 'payment', 'spending', 'budget', 'salary', 'fee']
+            has_financial_data = any(keyword in ' '.join(columns) for keyword in financial_keywords)
+            
+            # Sales/business data indicators  
+            business_keywords = ['sales', 'customer', 'product', 'order', 'quantity', 'units', 'region', 'category', 'performance', 'growth']
+            has_business_data = any(keyword in ' '.join(columns) for keyword in business_keywords)
+            
+            # Time series indicators
+            time_keywords = ['date', 'time', 'year', 'month', 'day', 'period', 'quarter']
+            has_time_data = any(keyword in ' '.join(columns) for keyword in time_keywords)
+            
+            # Get key insights from analysis history
+            key_insights = []
+            if self.analysis_history:
+                latest_analysis = self.analysis_history[-1].get('results', '')
+                # Extract key numbers or percentages for context
+                import re
+                numbers = re.findall(r'\d+\.?\d*%?', latest_analysis)
+                if numbers:
+                    key_insights.extend(numbers[:3])  # Top 3 key numbers
+            
+            # Generate role-specific, data-driven queries
+            if self.role == "Personal Accountant" and has_financial_data:
+                if has_time_data:
+                    search_queries.append("personal finance budgeting trends monthly spending analysis")
+                    search_queries.append("average household expenses categories 2024")
+                else:
+                    search_queries.append("personal financial health assessment ratios")
+                    search_queries.append("emergency fund recommendations financial advisors")
+                    
+            elif self.role == "Business Analyst" and has_business_data:
+                if 'sales' in ' '.join(columns):
+                    search_queries.append("sales performance benchmarks industry standards")
+                    search_queries.append("business KPI metrics analysis best practices")
+                elif 'customer' in ' '.join(columns):
+                    search_queries.append("customer analytics trends business intelligence")
+                    search_queries.append("customer retention benchmarks industry")
+                else:
+                    search_queries.append("business performance metrics analysis methods")
+                    
+            elif self.role == "Data Analyst":
+                if has_time_data:
+                    search_queries.append("time series analysis techniques business applications")
+                if has_financial_data or has_business_data:
+                    search_queries.append("data analysis methods financial business datasets")
+                else:
+                    search_queries.append("statistical analysis techniques data insights")
+            
+            # If no specific queries generated, fall back to generic but still relevant
+            if not search_queries:
+                if has_financial_data:
+                    search_queries.append("financial data analysis best practices")
+                elif has_business_data:
+                    search_queries.append("business data analysis insights methods")
+                else:
+                    search_queries.append("data analysis interpretation techniques")
+            
+            return search_queries[:3]  # Maximum 3 queries
+            
+        except Exception as e:
+            self.thoughts.append(f"⚠️ Error generating search queries: {str(e)}")
+            return []
 
     def _initialize_enhanced_features(self):
         """
@@ -1184,6 +1280,34 @@ The data is ready for analysis and visualization without additional cleaning.
         try:
             self.current_cycle_start = datetime.now()
             
+            # Perform data-specific web search for relevant context
+            web_search_context = ""
+            if self.role in ["Personal Accountant", "Business Analyst", "Data Analyst"] and self.data_copy is not None:
+                self.thoughts.append("🌐 Analyzing data to determine relevant external research...")
+                
+                # Analyze the actual data to create relevant search queries
+                search_queries = self._generate_data_specific_search_queries()
+                
+                if search_queries:
+                    self.thoughts.append(f"🔍 Generated {len(search_queries)} data-specific search queries")
+                    
+                    # Perform searches and compile results
+                    for query in search_queries[:2]:  # Limit to 2 searches to avoid overload
+                        try:
+                            search_result = self.perform_web_search(query)
+                            if search_result and "error" not in search_result.lower():
+                                web_search_context += f"\n🔍 {query}:\n{search_result}\n"
+                        except Exception as e:
+                            self.thoughts.append(f"⚠️ Web search failed for '{query}': {str(e)}")
+                            continue
+                    
+                    if web_search_context:
+                        self.thoughts.append("✅ Data-specific external research completed")
+                    else:
+                        self.thoughts.append("⚠️ No useful external research found")
+                else:
+                    self.thoughts.append("⚠️ No relevant search queries could be generated from data")
+            
             summary_prompt = f"""
 As a {self.role}, create a comprehensive summary of all analysis work completed:
 
@@ -1201,14 +1325,18 @@ DATA MANIPULATIONS:
 LEARNING POINTS:
 {chr(10).join([f"- {point}" for point in self.learning_points]) if self.learning_points else "No learning points recorded"}
 
+{"EXTERNAL MARKET CONTEXT:" + web_search_context if web_search_context else ""}
+
 TASK: Create a comprehensive executive summary that includes:
 1. KEY FINDINGS - Most important insights discovered
 2. DATA QUALITY - Assessment of data condition and improvements made
 3. RECOMMENDATIONS - Actionable suggestions based on analysis
 4. METHODOLOGY - Brief description of approach used
-5. LIMITATIONS - Any constraints or areas needing further investigation
+5. MARKET CONTEXT - How external trends relate to the findings (if available)
+6. LIMITATIONS - Any constraints or areas needing further investigation
 
 Format as a professional business report suitable for stakeholders.
+{"Include specific references to current market conditions and trends in your recommendations." if web_search_context else ""}
 """
             
             response = self._generate_response(summary_prompt)
